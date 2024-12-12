@@ -304,11 +304,11 @@ func TestOperatorPrecedenceParsing(t *testing.T) {
 	}
 }
 
-func testLiteralExpression {
+func testLiteralExpression(
 	t *testing.T,
 	exp ast.Expression,
 	expected interface{},
-} bool {
+) bool {
 	switch v := expected.(type) {
 	case int:
 		return testIntegerLiteral(t, exp, int64(v))
@@ -316,6 +316,7 @@ func testLiteralExpression {
 		return testIntegerLiteral(t, exp, v)
 	case string:
 		return testIdentifier(t, exp, v)
+	}
 	t.Errorf("type of exp not handled. got=%T", exp)
 	return false
 }
@@ -352,6 +353,11 @@ func testIdentifier(t *testing.T, exp ast.Expression, value string) bool {
 
 	if ident.Value != value {
 		t.Errorf("ident.value not %s. got=%s", value, ident.TokenLiteral())
+		return false
+	}
+
+	if ident.TokenLiteral() != value {
+		t.Errorf("ident.TokenLiteral not %s. got=%s", value, ident.TokenLiteral())
 		return false
 	}
 
