@@ -21,41 +21,6 @@ func checkParserErrors(t *testing.T, p *Parser) {
 	t.FailNow()
 }
 
-// func TestLetStatements(t *testing.T) {
-// 	input := `
-// 	let x = 5;
-// 	let y = 10;
-// 	let foobar = 838383;
-// 	`
-
-// 	l := lexer.New(input)
-// 	p := New(l)
-
-// 	program := p.ParseProgram()
-// 	checkParserErrors(t, p)
-// 	if program == nil {
-// 		t.Fatalf("ParseProgram() returned nil")
-// 	}
-// 	if len(program.Statements) != 3 {
-// 		t.Fatalf("program.Statements does not contain 3 statements. got=%d", len(program.Statements))
-// 	}
-
-// 	tests := []struct {
-// 		expectedIdentifier string
-// 	}{
-// 		{"x"},
-// 		{"y"},
-// 		{"foobar"},
-// 	}
-
-// 	for i, tt := range tests {
-// 		stmt := program.Statements[i]
-// 		if !testLetStatements(t, stmt, tt.expectedIdentifier) {
-// 			return
-// 		}
-// 	}
-// }
-
 func TestLetStatements(t *testing.T) {
 	tests := []struct {
 		input              string
@@ -414,6 +379,25 @@ func testIdentifier(t *testing.T, exp ast.Expression, value string) bool {
 	}
 
 	return true
+}
+
+func TestStringLiteralExpression(t *testing.T) {
+	input := `"hello world";`
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	stmt := program.Statements[0].(*ast.ExpressionStatement)
+	literal, ok := stmt.Expression.(*ast.StringLiteral)
+	if !ok {
+		t.Fatalf("exp not *ast.StringLiteral. got=%T", stmt.Expression)
+	}
+
+	if literal.Value != "hello world" {
+		t.Errorf("literal.Value not %q. got=%q", "hello world", literal.Value)
+	}
 }
 
 func TestBooleanExpression(t *testing.T) {
